@@ -22,3 +22,9 @@ uiserver.auth.type=apikey
 ############################## Configuration Flags ########################
 email.enable=true
 email.retry.interval.sec=30
+
+
+############################## DIA Agent Config ##############################
+dia.agent.url=https://main.dev.dronapay.net/dia/agent
+dia.agent.username=batchuser
+dia.agent.password=100!batch
