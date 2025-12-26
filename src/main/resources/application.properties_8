@@ -1,0 +1,24 @@
+
+######################## DB Params ####################
+##DB connection parameters
+
+jdbc.analytics.url=jdbc:postgresql://10.0.148.3:5432/goldcopy_transactionaldevm?ApplicationName=CaseMgmt(demo)
+jdbc.analytics.username=dronapay
+jdbc.analytics.password=terraformgcp
+
+
+############################# Component Config ######################
+##Camunda Params
+camunda.url=http://host.docker.internal:8082
+camunda.aml.username=amluser
+camunda.aml.password=Drona@aml54321
+
+##UIserver Params
+uiserver.url=https://main.dev.dronapay.net
+uiserver.api.key=f877a5b1-b6d6-4733-9d2e-0509538e536e
+token.filename=/mnt/d/docker_data/token.txt
+uiserver.auth.type=apikey
+
+############################## Configuration Flags ########################
+email.enable=true
+email.retry.interval.sec=30

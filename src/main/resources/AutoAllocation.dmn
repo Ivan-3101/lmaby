@@ -1,0 +1,876 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:biodi="http://bpmn.io/schema/dmn/biodi/2.0" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" xmlns:camunda="http://camunda.org/schema/1.0/dmn" id="AutoAllocationDecisioning" name="DRD" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="5.36.1">
+  <decision id="AutoAllocation" name="AutoAllocationDecisions" camunda:historyTimeToLive="P1D">
+    <informationRequirement id="InformationRequirement_1gao3gb">
+      <requiredInput href="#users" />
+    </informationRequirement>
+    <informationRequirement id="InformationRequirement_0x5qsu4">
+      <requiredInput href="#InputData_0bs7l10" />
+    </informationRequirement>
+    <decisionTable id="DecisionTable_10q4aq7" hitPolicy="FIRST">
+      <input id="Input_1" label="taskGroup">
+        <inputExpression id="InputExpression_1" typeRef="string">
+          <text>taskGroup</text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_0h9yegb" label="level1level2Asignee">
+        <inputExpression id="LiteralExpression_0c9j46e" typeRef="string">
+          <text>level1level2Asignee</text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_0vd6wj8" label="level2Asignee">
+        <inputExpression id="LiteralExpression_0hhqxfe" typeRef="string">
+          <text>level2Asignee</text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_12mw4cg" label="level3Asignee">
+        <inputExpression id="LiteralExpression_00flmz8" typeRef="string">
+          <text>level3Asignee</text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_0n9igfy" label="level4Asignee">
+        <inputExpression id="LiteralExpression_1gvk2up" typeRef="string">
+          <text>level4Asignee</text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_0pn3cnn" label="level5Asignee">
+        <inputExpression id="LiteralExpression_00q0vni" typeRef="string">
+          <text>level5Asignee</text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_14bf891" label="itAsignee">
+        <inputExpression id="LiteralExpression_1hbq7sw" typeRef="string">
+          <text>itAsignee</text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_1tpq9xd" label="users" biodi:width="1082">
+        <inputExpression id="LiteralExpression_19qo60l" typeRef="string">
+          <text>users</text>
+        </inputExpression>
+      </input>
+      <output id="OutputClause_1nhqwfw" label="level1level2Asignee" name="level1level2Asignee" typeRef="string" biodi:width="1664" />
+      <output id="OutputClause_1ujbj5h" label="level2Asignee" name="level2Asignee" typeRef="string" biodi:width="1664" />
+      <output id="OutputClause_0y5v6cx" label="level3Asignee" name="level3Asignee" typeRef="string" biodi:width="1664" />
+      <output id="OutputClause_0bwmh6s" label="level4Asignee" name="level4Asignee" typeRef="string" biodi:width="1664" />
+      <output id="OutputClause_1bhb9kk" label="level5Asignee" name="level5Asignee" typeRef="string" biodi:width="1664" />
+      <output id="OutputClause_0bomkw9" label="itAsignee" name="itAsignee" typeRef="string" biodi:width="1664" />
+      <rule id="DecisionRule_1rlbm4m">
+        <inputEntry id="UnaryTests_0hq2keo">
+          <text>"level1,level2"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0wzbvvl">
+          <text>"not-defined"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1kmjhkl">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1ofh0br">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1uqrzyt">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0yzdump">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1sw0aiq">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0fmn3a3">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1v7gca1">
+          <text>users[item.noOfTasksOfThisProcess=min(users.noOfTasksOfThisProcess)][1].username</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_01n96vn">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_15by7ye">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1gqong3">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0trkdnc">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1y7iyf5">
+          <text></text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0tac3x5">
+        <inputEntry id="UnaryTests_1yhpucs">
+          <text>"level1,level2"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_02hqwjt">
+          <text>not("not-defined")</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_142qdfb">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0zuvu1c">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0yxpw4p">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_03z22zk">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1dy6rdf">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_11kweb5">
+          <text>index of (users.username,level1level2Asignee)[1] = count(users)</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_19996e5">
+          <text>users[1].username</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1xcl03s">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0p7wbju">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_14z3rg3">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_167utdw">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1lwud4b">
+          <text></text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_07x96o8">
+        <inputEntry id="UnaryTests_042fryb">
+          <text>"level1,level2"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1erl1fs">
+          <text>not("not-defined")</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1i3ww46">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0bah89g">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_07nvz05">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1inuocu">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1mg06ir">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_18gopkb">
+          <text>index of (users.username,level1level2Asignee)[1] &lt; count(users)</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_150yvby">
+          <text>users[index of (users.username,level1level2Asignee)[1] + 1].username</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0h7zb4g">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1kmx0gv">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0ajdi4x">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_12daul6">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_13ivwo3">
+          <text></text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0c4o9i4">
+        <inputEntry id="UnaryTests_0m7m7ot">
+          <text>"level2"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0r4rodq">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0bydrz2">
+          <text>"not-defined"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1rqv64a">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0wha8vb">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_09kdcn5">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_08sw4tb">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1oh4552">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0wt3zp0">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0a6wn7v">
+          <text>users[item.noOfTasksOfThisProcess=min(users.noOfTasksOfThisProcess)][1].username</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_05ii22t">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1klp6gm">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1x5ig4m">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1mp1a7d">
+          <text></text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0igso10">
+        <inputEntry id="UnaryTests_0a7gpnu">
+          <text>"level2"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0x0ibw8">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_181802d">
+          <text>not("not-defined")</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0lny2mr">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1jfi2vr">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0ifrloo">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_11acd8a">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1dok8sz">
+          <text>index of (users.username,level2Asignee)[1] = count(users)</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1u03s1h">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_170nfyf">
+          <text>users[1].username</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1owa0rr">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_02zii37">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_065dplp">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_19wllwu">
+          <text></text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_16fchzp">
+        <inputEntry id="UnaryTests_06zh5dj">
+          <text>"level2"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0zjo9wr">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_041w8ly">
+          <text>not("not-defined")</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0rwrurg">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_14w7cc5">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1v8q1kn">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0wl9dzh">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0d5e7w4">
+          <text>index of (users.username,level2Asignee)[1] &lt; count(users)</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1ihru13">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1tlfl4h">
+          <text>users[index of (users.username,level2Asignee)[1] + 1].username</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0d0fqk2">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_06sbi7i">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0lv262i">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1dl16xd">
+          <text></text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0v4x2xh">
+        <inputEntry id="UnaryTests_0zcb3qf">
+          <text>"level3"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1pjo2zn">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0on9smh">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_06bocfe">
+          <text>"not-defined"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0awnb0r">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1lizx9w">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1b7ie9e">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0jnpk4d">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_14unuul">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0ry0x33">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1fdkf73">
+          <text>users[item.noOfTasksOfThisProcess=min(users.noOfTasksOfThisProcess)][1].username</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0wxv66g">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1vms2sj">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_03b0ikr">
+          <text></text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_11o28c9">
+        <inputEntry id="UnaryTests_18wqvo6">
+          <text>"level3"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_076p0at">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0vw96ia">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_174es86">
+          <text>not("not-defined")</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0jtii7j">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0t1mheb">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1ot3lfn">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1yym3ge">
+          <text>index of (users.username,level3Asignee)[1] = count(users)</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0fw83k4">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0atr3sr">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_015vzl0">
+          <text>users[1].username</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0f5xp2d">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1fubbqg">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_10k2q9k">
+          <text></text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0pt00uo">
+        <inputEntry id="UnaryTests_0k2v4yq">
+          <text>"level3"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0wiua83">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0dvzlaq">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_04cqhak">
+          <text>not("not-defined")</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_10g78dn">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_10xehwl">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0ocj7tm">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1ey1pjb">
+          <text>index of (users.username,level3Asignee)[1] &lt; count(users)</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_03zdw3y">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1kuwzrb">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_13mowxl">
+          <text>users[index of (users.username,level3Asignee)[1] + 1].username</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_065wd62">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0ryhe97">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0usfzrv">
+          <text></text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1d0cy1x">
+        <inputEntry id="UnaryTests_12mdfss">
+          <text>"level4"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0jr0cxo">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0xn7hlm">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1u9bfrs">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_16oeo1p">
+          <text>"not-defined"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1snt8b5">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_11wj05e">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1y98ihc">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0d0vfie">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_16y1jha">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0amdidb">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_01evc93">
+          <text>users[item.noOfTasksOfThisProcess=min(users.noOfTasksOfThisProcess)][1].username</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0nbqkta">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0suer3p">
+          <text></text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0hfryuu">
+        <inputEntry id="UnaryTests_0yu1odw">
+          <text>"level4"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_06iinx2">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0q9cl6z">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_08my4g2">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1bjsmqe">
+          <text>not("not-defined")</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0olhfl7">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0f2ols6">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_13ohnnz">
+          <text>index of (users.username,level4Asignee)[1] = count(users)</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0cyd0du">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1pag7eq">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0vhre4w">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1b3iqer">
+          <text>users[1].username</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0cpqg94">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1w7hne1">
+          <text></text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0im0yyg">
+        <inputEntry id="UnaryTests_12r3rby">
+          <text>"level4"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0jorgpm">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0pxy621">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_18n3m2x">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1a7d9kl">
+          <text>not("not-defined")</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1udbxlc">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_178xst1">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1o16h2w">
+          <text>index of (users.username,level4Asignee)[1] &lt; count(users)</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0nlx7r8">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0gqy1i6">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0w91fgf">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0l3yczd">
+          <text>users[index of (users.username,level4Asignee)[1] + 1].username</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0ctp8w5">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1x8it4z">
+          <text></text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_19e81nv">
+        <inputEntry id="UnaryTests_0v3qp89">
+          <text>"level5"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0lu4l8l">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1ascsco">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_12bndx8">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_13bv9o3">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1lxptgs">
+          <text>"not-defined"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1tjanw8">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1gp77dn">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_030107r">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0kef4zy">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0e7mu1k">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0b0ahr1">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0mmx0ap">
+          <text>users[item.noOfTasksOfThisProcess=min(users.noOfTasksOfThisProcess)][1].username</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1askmhe">
+          <text></text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1hb6vqa">
+        <inputEntry id="UnaryTests_09gn07c">
+          <text>"level5"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0y36vvk">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_002j5jj">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0nz8x2c">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0qb1eoh">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_194gfrv">
+          <text>not("not-defined")</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0j34msz">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_00lqbe0">
+          <text>index of (users.username,level5Asignee)[1] = count(users)</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0sw2dup">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1bj5xo8">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1b9oqr2">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_18zvl9s">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1n9bxwh">
+          <text>users[1].username</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_13hhi6n">
+          <text></text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_04dz7th">
+        <inputEntry id="UnaryTests_1ppr90u">
+          <text>"level5"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0k1mi0n">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_09x5dr5">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1mh7ke7">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_146tuxs">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1x9nhay">
+          <text>not("not-defined")</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0ksslv5">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1qn6cw9">
+          <text>index of (users.username,level5Asignee)[1] &lt; count(users)</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_04oc6lx">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_14pqxj7">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1qrdbir">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_17eljor">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1q46ufh">
+          <text>users[index of (users.username,level5Asignee)[1] + 1].username</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0okud37">
+          <text></text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0pjnp82">
+        <inputEntry id="UnaryTests_0240c9l">
+          <text>"it"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1jgh5sg">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0q5fch7">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_14f6o4s">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0u27juf">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_19bwfa2">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0tngwkb">
+          <text>"not-defined"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0nap2g2">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_04iaxj2">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0y0kalb">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1n8xh3s">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0zar7af">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0few8ks">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0les5yf">
+          <text>users[item.noOfTasksOfThisProcess=min(users.noOfTasksOfThisProcess)][1].username</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0kofwo2">
+        <inputEntry id="UnaryTests_1gxzn43">
+          <text>"it"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1gmx20y">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0ris91w">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0icqnhj">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1nkv698">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0p21hci">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0e47phx">
+          <text>not("not-defined")</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_12nrpg9">
+          <text>index of (users.username,itAsignee)[1] = count(users)</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1bo0luz">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1kd3byf">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_13szxmm">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1v4gora">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_04ep07i">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_07byqgi">
+          <text>users[1].username</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_127a21c">
+        <inputEntry id="UnaryTests_1ieej19">
+          <text>"it"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1x2g8kw">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_17sv7tc">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_11k5qr5">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1e0pdmw">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0z3gd1l">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1psl6s8">
+          <text>not("not-defined")</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0466i2x">
+          <text>index of (users.username,itAsignee)[1] &lt; count(users)</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1a2j2h9">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1oyr0wa">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0y5ehfe">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_147maff">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0b3uyrw">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1bdi55r">
+          <text>users[index of (users.username,itAsignee)[1] + 1].username</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <inputData id="users" name="users" />
+  <inputData id="InputData_0bs7l10" name="taskGroup" />
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram>
+      <dmndi:DMNShape dmnElementRef="AutoAllocation">
+        <dc:Bounds height="80" width="180" x="330" y="100" />
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="DMNShape_1lwsznq" dmnElementRef="users">
+        <dc:Bounds height="45" width="125" x="127" y="327" />
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="DMNEdge_0h2w695" dmnElementRef="InformationRequirement_1gao3gb">
+        <di:waypoint x="190" y="327" />
+        <di:waypoint x="390" y="200" />
+        <di:waypoint x="390" y="180" />
+      </dmndi:DMNEdge>
+      <dmndi:DMNShape id="DMNShape_07m2z85" dmnElementRef="InputData_0bs7l10">
+        <dc:Bounds height="45" width="125" x="558" y="338" />
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="DMNEdge_0flsyh5" dmnElementRef="InformationRequirement_0x5qsu4">
+        <di:waypoint x="621" y="338" />
+        <di:waypoint x="450" y="200" />
+        <di:waypoint x="450" y="180" />
+      </dmndi:DMNEdge>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

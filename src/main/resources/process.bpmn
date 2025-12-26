@@ -1,0 +1,1270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1xkdxhi" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.34.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.23.0">
+  <bpmn:process id="AMLCases" name="AML Cases" isExecutable="true" >
+    <bpmn:startEvent id="Event_1e3l95j" name="Create Ticket">
+      <bpmn:outgoing>Flow_15rnuix</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="Activity_068lxij" name="Generate TicketID and Workflow Name" camunda:class="com.DronaPay.frm.AMLCASES.GenerateIDAndWorkflowName">
+      <bpmn:incoming>Flow_15rnuix</bpmn:incoming>
+      <bpmn:outgoing>Flow_058ecar</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_15rnuix" sourceRef="Event_1e3l95j" targetRef="Activity_068lxij" />
+    <bpmn:sequenceFlow id="Flow_058ecar" sourceRef="Activity_068lxij" targetRef="Activity_05vrr7b" />
+    <bpmn:exclusiveGateway id="Gateway_0lnlpbh" name="Suspicious?">
+      <bpmn:incoming>Flow_11f3ske</bpmn:incoming>
+      <bpmn:outgoing>Flow_00kway3</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0lphhsk</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1scg4a5</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1xwlb57</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="Gateway_10dnygf" name="Action?">
+      <bpmn:incoming>Flow_06hfn9n</bpmn:incoming>
+      <bpmn:outgoing>Flow_0gragch</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1a0fxor</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1xy7r0f</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_06hfn9n" sourceRef="Activity_00sb3sv" targetRef="Gateway_10dnygf" />
+    <bpmn:sequenceFlow id="Flow_0gragch" name="Send back to L1" sourceRef="Gateway_10dnygf" targetRef="Activity_0n203ob">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${Action3=="yes"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:userTask id="Activity_0stkafm" name="Review By Selected Branch" camunda:assignee="${branchuserDynamicDropdown}" camunda:candidateGroups="${'branch_'.concat(execution.getTenantId())}">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="Transaction" label="Transaction" type="string" />
+          <camunda:formField id="RiskScore" label="RiskScore" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="IsProcessBulk" label="IsProcessBulk" type="boolean" defaultValue="true">
+            <camunda:validation>
+              <camunda:constraint name="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="TransactionType" label="TransactionType" type="string" />
+        </camunda:formData>
+        <camunda:taskListener class="com.DronaPay.frm.AMLCASES.CreatBranchTaskListener" event="create" id="creatSelectBranchListner" />
+        <camunda:taskListener class="com.DronaPay.frm.AMLCASES.AssignmentMail" event="assignment" id="AssignmentBranch" />
+        <camunda:taskListener class="com.DronaPay.frm.AMLCASES.CompleteDBBranchListner" event="complete" id="CompleteBranch" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_00kway3</bpmn:incoming>
+      <bpmn:outgoing>Flow_04akihz</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Activity_0h3c17z" name="Review By DB Team" camunda:assignee="${dbuserDynamicDropdown}" camunda:candidateGroups="${'db_'.concat(execution.getTenantId())}">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="Transaction" label="Transaction" type="string" />
+          <camunda:formField id="RiskScore" label="RiskScore" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="IsProcessBulk" label="IsProcessBulk" type="boolean" defaultValue="true">
+            <camunda:validation>
+              <camunda:constraint name="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="TransactionType" label="TransactionType" type="string" />
+        </camunda:formData>
+        <camunda:taskListener class="com.DronaPay.frm.AMLCASES.CreatDbTaskListener" event="create" id="createDbTaskListener" />
+        <camunda:taskListener class="com.DronaPay.frm.AMLCASES.AssignmentMail" event="assignment" id="AssignmendDB" />
+        <camunda:taskListener class="com.DronaPay.frm.AMLCASES.CompleteDBBranchListner" event="complete" id="CompleteDB" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1xwlb57</bpmn:incoming>
+      <bpmn:outgoing>Flow_1lirfjv</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_1lirfjv" sourceRef="Activity_0h3c17z" targetRef="Activity_0cmtxnz" />
+    <bpmn:sequenceFlow id="Flow_04akihz" sourceRef="Activity_0stkafm" targetRef="Activity_0cmtxnz" />
+    <bpmn:serviceTask id="Activity_05ctjpi" name="STR Note &#38; Demographic info of Merchant" camunda:class="com.DronaPay.frm.AMLCASES.StrNote">
+      <bpmn:incoming>Flow_1a0fxor</bpmn:incoming>
+      <bpmn:outgoing>Flow_1cbmnbw</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="Activity_1kzaeai" name="Review Case By L3" camunda:assignee="${level3Asignee}" camunda:candidateGroups="${'level3_'.concat(execution.getTenantId())}">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="Transaction" label="Transaction" type="string" />
+          <camunda:formField id="RiskScore" label="RiskScore" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="IsProcessBulk" label="IsProcessBulk" type="boolean" defaultValue="true">
+            <camunda:validation>
+              <camunda:constraint name="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Action4" label="What action would you like to take?" type="enum">
+            <camunda:validation>
+              <camunda:constraint name="required" />
+            </camunda:validation>
+            <camunda:value id="sendtol4" name="Approve STR, Send to L4" />
+            <camunda:value id="backtol2" name="Back to L2" />
+            <camunda:value id="sendtol5" name="Approve STR, Send to L5" />
+            <camunda:value id="reject" name="Reject, Close Case" />
+          </camunda:formField>
+          <camunda:formField id="validations" label="Validations" type="enum">
+            <camunda:value id="Required" name="Action4" />
+          </camunda:formField>
+          <camunda:formField id="TransactionType" label="TransactionType" type="string" />
+          <camunda:formField id="str_report_id" label="STR Report ID" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="links" label="links" type="enum">
+            <camunda:value id="`Review_STR_Report`" name="`${configData.ENVIRONMENT}/user/generic-form?data=${encodeURIComponent(JSON.stringify({ivalueid:formVariable.str_report_id.value,requestType:&#34;PUT&#34;,redirectPath:`/user/case-management/tasks?ticketid=${task?.ticketID}&#38;status=My`,apiBody:{processInstanceID:task?.processInstanceId,itenantId:indexLogic?.task?.tenantId}}))}` formVariable.str_report_id?.value?.toString()?.length&#62;0" />
+          </camunda:formField>
+          <camunda:formField id="bulkProcess-Action4" type="enum">
+            <camunda:value id="reject" name="Close Case" />
+          </camunda:formField>
+          <camunda:formField id="conditions" label="Conditions" type="enum">
+            <camunda:value id="bulkProcess-Action4" name="false" />
+          </camunda:formField>
+        </camunda:formData>
+        <camunda:taskListener class="com.DronaPay.frm.AMLCASES.AssignmentMail" event="assignment" id="AssignmentL3Listner" />
+        <camunda:taskListener class="com.DronaPay.frm.AMLCASES.CreateLXListner" event="create" id="CreateL3Listner" />
+        <camunda:properties>
+          <camunda:property name="isProcessBulk" value="true" />
+        </camunda:properties>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_146v2y1</bpmn:incoming>
+      <bpmn:incoming>Flow_0f2dspb</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ce1rip</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_1a0fxor" name="Generate STR" sourceRef="Gateway_10dnygf" targetRef="Activity_05ctjpi">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${Action3=="generatestr"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1cbmnbw" sourceRef="Activity_05ctjpi" targetRef="Activity_0kqh5iy" />
+    <bpmn:exclusiveGateway id="Gateway_0kn7akq" name="Action?">
+      <bpmn:incoming>Flow_0ce1rip</bpmn:incoming>
+      <bpmn:outgoing>Flow_1qgxz6t</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0n5d5u6</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0qnwd5t</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1ou7d7o</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0ce1rip" sourceRef="Activity_1kzaeai" targetRef="Gateway_0kn7akq" />
+    <bpmn:sequenceFlow id="Flow_1qgxz6t" name="Back to L2" sourceRef="Gateway_0kn7akq" targetRef="Activity_1koklf8">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${Action4=="backtol2"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:userTask id="Activity_0gwk1lw" name="Review Case By L4" camunda:assignee="${level4Asignee}" camunda:candidateGroups="${'level4_'.concat(execution.getTenantId())}">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="Transaction" label="Transaction" type="string" />
+          <camunda:formField id="RiskScore" label="RiskScore" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="IsProcessBulk" label="IsProcessBulk" type="boolean" defaultValue="true">
+            <camunda:validation>
+              <camunda:constraint name="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Action5" label="What action would you like to take?" type="enum">
+            <camunda:validation>
+              <camunda:constraint name="required" />
+            </camunda:validation>
+            <camunda:value id="approvestrl4" name="Approve STR, Send to IT" />
+            <camunda:value id="backtol3" name="Back to L3" />
+            <camunda:value id="sendtol5" name="Approve STR, Send to L5" />
+            <camunda:value id="reject" name="Reject, Close Case" />
+          </camunda:formField>
+          <camunda:formField id="validations" label="Validations" type="enum">
+            <camunda:value id="Required" name="Action5" />
+          </camunda:formField>
+          <camunda:formField id="TransactionType" label="TransactionType" type="string" />
+          <camunda:formField id="str_report_id" label="STR Report ID" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="links" label="links" type="enum">
+            <camunda:value id="`Review_STR_Report`" name="`${configData.ENVIRONMENT}/user/generic-form?data=${encodeURIComponent(JSON.stringify({ivalueid:formVariable.str_report_id.value,requestType:&#34;PUT&#34;,redirectPath:`/user/case-management/tasks?ticketid=${task?.ticketID}&#38;status=My`,apiBody:{processInstanceID:task?.processInstanceId,itenantId:indexLogic?.task?.tenantId}}))}` formVariable.str_report_id?.value?.toString()?.length&#62;0" />
+          </camunda:formField>
+          <camunda:formField id="bulkProcess-Action5" type="enum">
+            <camunda:value id="reject" name="Close Case" />
+          </camunda:formField>
+          <camunda:formField id="conditions" label="Conditions" type="enum">
+            <camunda:value id="bulkProcess-Action5" name="false" />
+          </camunda:formField>
+        </camunda:formData>
+        <camunda:taskListener class="com.DronaPay.frm.AMLCASES.CreateLXListner" event="create" id="CreateL4Listner" />
+        <camunda:taskListener class="com.DronaPay.frm.AMLCASES.AssignmentMail" event="assignment" id="AssignmentL4Listner" />
+        <camunda:properties>
+          <camunda:property name="isProcessBulk" value="true" />
+        </camunda:properties>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_02y42za</bpmn:incoming>
+      <bpmn:outgoing>Flow_19x0diy</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0n5d5u6" name="Send to L4" sourceRef="Gateway_0kn7akq" targetRef="Activity_0qwyiuo">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${Action4=="sendtol4"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:serviceTask id="Activity_12euhcx" name="Notify L5 about pending cases" camunda:class="com.DronaPay.frm.AMLCASES.NotifyL5PendingCases">
+      <bpmn:incoming>Flow_09s3ebh</bpmn:incoming>
+      <bpmn:incoming>Flow_1w6meex</bpmn:incoming>
+      <bpmn:outgoing>Flow_0qudlaj</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Event_1pbwbxp" name="End Path">
+      <bpmn:incoming>Flow_0qudlaj</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_09s3ebh" sourceRef="Event_1cntwtu" targetRef="Activity_12euhcx" />
+    <bpmn:sequenceFlow id="Flow_0qudlaj" sourceRef="Activity_12euhcx" targetRef="Event_1pbwbxp" />
+    <bpmn:exclusiveGateway id="Gateway_0xcckzr" name="Action?">
+      <bpmn:incoming>Flow_19x0diy</bpmn:incoming>
+      <bpmn:outgoing>Flow_05alrqx</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1v9z72z</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1glqshm</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1iy8x5g</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_19x0diy" sourceRef="Activity_0gwk1lw" targetRef="Gateway_0xcckzr" />
+    <bpmn:sequenceFlow id="Flow_05alrqx" name="Back to L3" sourceRef="Gateway_0xcckzr" targetRef="Activity_0a12si2">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${Action5=="backtol3"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_11f3ske" sourceRef="Activity_0cmtxnz" targetRef="Gateway_0lnlpbh" />
+    <bpmn:sequenceFlow id="Flow_1w6meex" sourceRef="Event_17ww84l" targetRef="Activity_12euhcx" />
+    <bpmn:userTask id="Activity_03yu3mr" name="Review Case By L5" camunda:assignee="${level5Asignee}" camunda:candidateGroups="${'level5_'.concat(execution.getTenantId())}">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="Transaction" label="Transaction" type="string" />
+          <camunda:formField id="RiskScore" label="RiskScore" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="IsProcessBulk" label="IsProcessBulk" type="boolean" defaultValue="true">
+            <camunda:validation>
+              <camunda:constraint name="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Action6" label="What decision would you like to take?" type="enum">
+            <camunda:validation>
+              <camunda:constraint name="required" />
+            </camunda:validation>
+            <camunda:value id="approve" name="Approve STR" />
+            <camunda:value id="reject" name="Reject, Close Case" />
+            <camunda:value id="back_l5_to_l4" name="Back to L4" />
+            <camunda:value id="back_l5_to_l3" name="Back to L3" />
+          </camunda:formField>
+          <camunda:formField id="validations" label="Validations" type="enum">
+            <camunda:value id="Required" name="Action6" />
+          </camunda:formField>
+          <camunda:formField id="TransactionType" label="TransactionType" type="string" />
+          <camunda:formField id="str_report_id" label="STR Report ID" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="links" label="links" type="enum">
+            <camunda:value id="`Review_STR_Report`" name="`${configData.ENVIRONMENT}/user/generic-form?data=${encodeURIComponent(JSON.stringify({ivalueid:formVariable.str_report_id.value,requestType:&#34;PUT&#34;,redirectPath:`/user/case-management/tasks?ticketid=${task?.ticketID}&#38;status=My`,apiBody:{processInstanceID:task?.processInstanceId,itenantId:indexLogic?.task?.tenantId}}))}` formVariable.str_report_id?.value?.toString()?.length&#62;0" />
+          </camunda:formField>
+          <camunda:formField id="bulkProcess-Action6" type="enum">
+            <camunda:value id="reject" name="Close Case" />
+          </camunda:formField>
+          <camunda:formField id="conditions" label="Conditions" type="enum">
+            <camunda:value id="bulkProcess-Action6" name="false" />
+          </camunda:formField>
+        </camunda:formData>
+        <camunda:taskListener class="com.DronaPay.frm.AMLCASES.CreateLXListner" event="create" id="CreateL5Listner" />
+        <camunda:taskListener class="com.DronaPay.frm.AMLCASES.AssignmentMail" event="assignment" id="AssignmentL5Listner" />
+        <camunda:properties>
+          <camunda:property name="isProcessBulk" value="true" />
+        </camunda:properties>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0p8x1jw</bpmn:incoming>
+      <bpmn:incoming>Flow_1ik8qo2</bpmn:incoming>
+      <bpmn:outgoing>Flow_1x60rq6</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_1v9z72z" name="Send to L5" sourceRef="Gateway_0xcckzr" targetRef="Activity_1mg6uqo">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${Action5=="sendtol5"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:exclusiveGateway id="Gateway_14o4n93" name="Decision?">
+      <bpmn:incoming>Flow_1x60rq6</bpmn:incoming>
+      <bpmn:outgoing>Flow_06ax4dh</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0ovgvl6</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0roud79</bpmn:outgoing>
+      <bpmn:outgoing>Flow_04w7xy4</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1x60rq6" sourceRef="Activity_03yu3mr" targetRef="Gateway_14o4n93" />
+    <bpmn:userTask id="Activity_1ayo858" name="STR Filing By IT" camunda:assignee="${itAsignee}" camunda:candidateGroups="${'it_'.concat(execution.getTenantId())}">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="Transaction" label="Transaction" type="string" />
+          <camunda:formField id="RiskScore" label="RiskScore" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="IsProcessBulk" label="IsProcessBulk" type="boolean" defaultValue="true">
+            <camunda:validation>
+              <camunda:constraint name="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="TransactionType" label="TransactionType" type="string" />
+          <camunda:formField id="links" label="links" type="enum">
+            <camunda:value id="Click_to_view_and_download_report" name="`${configData.ENVIRONMENT}/user/generic-form?data=${encodeURIComponent(JSON.stringify({ivalueid:formVariable.str_report_id.value,requestType:&#34;DOWNLOADONLY&#34;,redirectPath:`/user/case-management/tasks?ticketid=${task?.ticketID}&#38;status=My`,apiBody:{processInstanceID:task?.processInstanceId,itenantId:indexLogic?.task?.tenantId}}))}` formVariable.str_report_id?.value?.toString()?.length&#62;0" />
+          </camunda:formField>
+          <camunda:formField id="str_report_id" label="STR Report ID" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1vlroem</bpmn:incoming>
+      <bpmn:outgoing>Flow_019f0hi</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="Event_0ihdsom" name="Close Ticket">
+      <bpmn:incoming>Flow_1ja2wdc</bpmn:incoming>
+      <bpmn:incoming>Flow_019f0hi</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_06ax4dh" name="Reject" sourceRef="Gateway_14o4n93" targetRef="Activity_11rg6dv">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${Action6=="reject"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1glqshm" name="Reject" sourceRef="Gateway_0xcckzr" targetRef="Activity_11rg6dv">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${Action5=="reject"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0qnwd5t" name="Reject" sourceRef="Gateway_0kn7akq" targetRef="Activity_11rg6dv">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${Action4=="reject"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1ou7d7o" name="Send to L5" sourceRef="Gateway_0kn7akq" targetRef="Activity_08ijupj">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${Action4=="sendtol5"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0ovgvl6" name="Approve" sourceRef="Gateway_14o4n93" targetRef="Activity_1un8pu3">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${Action6=="approve"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1khz51h" sourceRef="Activity_1un8pu3" targetRef="Activity_0b1tklu" />
+    <bpmn:sequenceFlow id="Flow_01llhiv" sourceRef="Activity_0b1tklu" targetRef="Activity_1v5dqqg" />
+    <bpmn:sequenceFlow id="Flow_1ja2wdc" sourceRef="Activity_11rg6dv" targetRef="Event_0ihdsom" />
+    <bpmn:serviceTask id="Activity_1un8pu3" name="Approve the case - STR" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:class="com.DronaPay.frm.AMLCASES.ApproveCase">
+      <bpmn:incoming>Flow_0ovgvl6</bpmn:incoming>
+      <bpmn:incoming>Flow_1iy8x5g</bpmn:incoming>
+      <bpmn:outgoing>Flow_1khz51h</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_0b1tklu" name="Generate STR (XML/CSV)" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:class="com.DronaPay.frm.AMLCASES.GenerateStrXmlCsv">
+      <bpmn:incoming>Flow_1khz51h</bpmn:incoming>
+      <bpmn:outgoing>Flow_01llhiv</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_11rg6dv" name="Reject the case" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:class="com.DronaPay.frm.AMLCASES.RejectCase">
+      <bpmn:incoming>Flow_06ax4dh</bpmn:incoming>
+      <bpmn:incoming>Flow_1glqshm</bpmn:incoming>
+      <bpmn:incoming>Flow_0qnwd5t</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ja2wdc</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="Activity_0cmtxnz" name="Review Case By L1/ L2" camunda:assignee="${level1level2Asignee}" camunda:candidateGroups="${'level1_'.concat(execution.getTenantId()).concat(',').concat('level2_').concat(execution.getTenantId())}">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="Transaction" label="Transaction" type="string" />
+          <camunda:formField id="RiskScore" label="RiskScore" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="IsProcessBulk" label="IsProcessBulk" type="boolean" defaultValue="true">
+            <camunda:validation>
+              <camunda:constraint name="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Action" label="What action would you like to take?" type="enum">
+            <camunda:validation>
+              <camunda:constraint name="required" />
+            </camunda:validation>
+            <camunda:value id="suspicious" name="Suspicious, Send to L2" />
+            <camunda:value id="notsuspicious" name="Close Case" />
+            <camunda:value id="suspicioussendtobranch" name="Suspicious, Send to Branch" />
+            <camunda:value id="suspicioussendtodb" name="Suspicious, Send to DB" />
+          </camunda:formField>
+          <camunda:formField id="dbuserDynamicDropdown" label="Please Select DB User to Assign" type="string" />
+          <camunda:formField id="branchuserDynamicDropdown" label="Please Select Branch User to Assign" type="string" />
+          <camunda:formField id="statusoptions" label="statusoptions" type="enum">
+            <camunda:value id="Pending" name="Pending" />
+            <camunda:value id="Pending_with_DB" name="Pending with DB" />
+            <camunda:value id="Pending_with_Branch" name="Pending with Branch" />
+            <camunda:value id="Response_Received" name="Response Received" />
+            <camunda:value id="False_Positive" name="False Positive" />
+            <camunda:value id="Escalated_to_L2" name="Escalated to L2" />
+            <camunda:value id="Escalated_to_L3" name="Escalated to L3" />
+            <camunda:value id="Escalated_to_L4" name="Escalated to L4" />
+            <camunda:value id="Escalated_to_L5" name="Escalated to L5" />
+            <camunda:value id="Query_Raised" name="Query Raised" />
+            <camunda:value id="STR_Approved" name="STR Approved" />
+            <camunda:value id="STR_Generated" name="STR Generated" />
+          </camunda:formField>
+          <camunda:formField id="validations" label="Validations" type="enum">
+            <camunda:value id="Required" name="Action" />
+          </camunda:formField>
+          <camunda:formField id="TransactionType" label="TransactionType" type="string" />
+          <camunda:formField id="conditions" label="Conditions" type="enum">
+            <camunda:value id="Remarks" name="formVariable.Action.value===&#34;notsuspicious&#34; " />
+            <camunda:value id="bulkProcess-Action" name="false" />
+            <camunda:value id="dbuserDynamicDropdown" name="formVariable.Action.value===&#34;suspicioussendtodb&#34;" />
+            <camunda:value id="branchuserDynamicDropdown" name="formVariable.Action.value===&#34;suspicioussendtobranch&#34;" />
+          </camunda:formField>
+          <camunda:formField id="Remarks" label="Remarks" type="string" />
+          <camunda:formField id="bulkProcess-Action" type="enum">
+            <camunda:value id="notsuspicious" name="Close Case" />
+          </camunda:formField>
+          <camunda:formField id="apistobecalled" label="callapis" type="enum">
+            <camunda:value id="dbuserDynamicDropdown" name="/api/v1/case-management/tasks/get-db-users-dropdown GET dbuserDynamicDropdown dbuserDynamicDropdown.amlcases" />
+            <camunda:value id="branchuserDynamicDropdown" name="/api/v1/case-management/tasks/get-branch-users-dropdown GET branchuserDynamicDropdown branchuserDynamicDropdown.amlcases" />
+          </camunda:formField>
+        </camunda:formData>
+        <camunda:taskListener class="com.DronaPay.frm.AMLCASES.AssignmentMail" event="assignment" id="AssignmentMail" />
+        <camunda:taskListener class="com.DronaPay.frm.AMLCASES.CreateL1Listner" event="create" id="CreateListnerL1" />
+        <camunda:properties>
+          <camunda:property name="isProcessBulk" value="true" />
+        </camunda:properties>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_04akihz</bpmn:incoming>
+      <bpmn:incoming>Flow_1lirfjv</bpmn:incoming>
+      <bpmn:incoming>Flow_0e2hldw</bpmn:incoming>
+      <bpmn:incoming>Flow_19633ve</bpmn:incoming>
+      <bpmn:outgoing>Flow_11f3ske</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Activity_00sb3sv" name="Review Case By L2" camunda:assignee="${level2Asignee}" camunda:candidateGroups="${'level2_'.concat(execution.getTenantId())}">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="Transaction" label="Transaction" type="string" />
+          <camunda:formField id="RiskScore" label="RiskScore" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="IsProcessBulk" label="IsProcessBulk" type="boolean" defaultValue="true">
+            <camunda:validation>
+              <camunda:constraint name="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="Action3" label="What action would you like to take?" type="enum">
+            <camunda:validation>
+              <camunda:constraint name="required" />
+            </camunda:validation>
+            <camunda:value id="yes" name="Send back to L1" />
+            <camunda:value id="generatestr" name="Prepare STR, Send to L3" />
+            <camunda:value id="markasflpsclwithoutstr" name="Close Case" />
+          </camunda:formField>
+          <camunda:formField id="validations" label="Validations" type="enum">
+            <camunda:value id="Required" name="Action3" />
+            <camunda:value id="ShouldNotBeEmptyStringIf" name="formVariable?.Action3?.value===&#34;generatestr&#34;-str_report_id" />
+          </camunda:formField>
+          <camunda:formField id="TransactionType" label="TransactionType" type="string" />
+          <camunda:formField id="links" label="links" type="enum">
+            <camunda:value id="Add_STR_Report" name="`${configData.ENVIRONMENT}/user/generic-form?data=${encodeURIComponent(JSON.stringify({name:&#34;STR Report&#34;,Address:`${formVariable?.TransactionType?.value===&#34;Batch&#34;?getVal(&#34;id&#34;,formVariable,task):getVal2(&#34;externalId&#34;,formVariable)}`,requestType:&#34;POST&#34;,ticketID:`${task?.ticketID}`,redirectPath:`/user/case-management/tasks?ticketid=${task?.ticketID}&#38;status=My`,apiBody:{processInstanceID:task?.processInstanceId,itenantId:indexLogic?.task?.tenantId},defaultValues:[{key:&#34;Tenant&#34;,lodashKey:&#34;params.apiBody.itenantId&#34;,PARSEINT:true},{key:&#34;refnum&#34;,lodashKey:&#34;params.ticketID&#34;,PARSEINT:true},{key:&#34;Address&#34;,lodashKey:&#34;params.Address&#34;}]}))}` formVariable.Action3.value===&#34;generatestr&#34;&#38;&#38;!formVariable?.str_report_id?.value" />
+            <camunda:value id="`Check_STR_Report`" name="`${configData.ENVIRONMENT}/user/generic-form?data=${encodeURIComponent(JSON.stringify({ivalueid:formVariable.str_report_id.value,requestType:&#34;PUT&#34;,redirectPath:`/user/case-management/tasks?ticketid=${task?.ticketID}&#38;status=My`,apiBody:{processInstanceID:task?.processInstanceId,itenantId:indexLogic?.task?.tenantId}}))}` formVariable.str_report_id?.value?.toString()?.length&#62;0&#38;&#38;formVariable.Action3.value===&#34;generatestr&#34;" />
+          </camunda:formField>
+          <camunda:formField id="conditions" label="Conditions" type="enum">
+            <camunda:value id="str_report_id" name="formVariable.Action3.value===&#34;generatestr&#34;" />
+            <camunda:value id="Remarks" name="formVariable.Action3.value===&#34;markasflpsclwithoutstr&#34; " />
+            <camunda:value id="bulkProcess-Action3" name="false" />
+          </camunda:formField>
+          <camunda:formField id="str_report_id" label="STR Report ID" type="long">
+            <camunda:validation>
+              <camunda:constraint name="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="custom_err_msg" label="error" type="enum">
+            <camunda:value id="str_report_id" name="This field is required. Click on the above link to generate ID" />
+          </camunda:formField>
+          <camunda:formField id="Remarks" label="Remarks" type="string" />
+          <camunda:formField id="bulkProcess-Action3" type="enum">
+            <camunda:value id="markasflpsclwithoutstr" name="Close Case" />
+          </camunda:formField>
+        </camunda:formData>
+        <camunda:taskListener class="com.DronaPay.frm.AMLCASES.AssignmentMail" event="assignment" id="AssignmentL2Listener" />
+        <camunda:taskListener class="com.DronaPay.frm.AMLCASES.CreateLXListner" event="create" id="CreateL2Listner" />
+        <camunda:properties>
+          <camunda:property name="isProcessBulk" value="true" />
+        </camunda:properties>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_19k2goh</bpmn:incoming>
+      <bpmn:incoming>Flow_0p4s3ci</bpmn:incoming>
+      <bpmn:outgoing>Flow_06hfn9n</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:boundaryEvent id="Event_17ww84l" name="2 days" camunda:asyncAfter="true" cancelActivity="false" attachedToRef="Activity_1kzaeai">
+      <bpmn:outgoing>Flow_1w6meex</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_14x4bqd">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">P2D</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:boundaryEvent id="Event_1cntwtu" name="2 days" camunda:asyncAfter="true" cancelActivity="false" attachedToRef="Activity_0gwk1lw">
+      <bpmn:outgoing>Flow_09s3ebh</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_1g9qxo2">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">P2D</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_00kway3" sourceRef="Gateway_0lnlpbh" targetRef="Activity_0stkafm">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${Action=="suspicioussendtobranch"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0lphhsk" sourceRef="Gateway_0lnlpbh" targetRef="Activity_1ad243h">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${Action=="suspicious"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1scg4a5" name="False Positive, Close Case" sourceRef="Gateway_0lnlpbh" targetRef="Activity_1f46b6h">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${Action=="notsuspicious"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1xy7r0f" name="False Positive, Close Case" sourceRef="Gateway_10dnygf" targetRef="Activity_08x933w">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${Action3=="markasflpsclwithoutstr"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:serviceTask id="Activity_0z3bhcd" name="Create QC" camunda:class="com.DronaPay.frm.AMLCASES.CreateQc">
+      <bpmn:incoming>Flow_0cvcdnu</bpmn:incoming>
+      <bpmn:incoming>Flow_14e3l18</bpmn:incoming>
+      <bpmn:outgoing>Flow_0mv3ybl</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Event_19cz4zc" name="Close Ticket">
+      <bpmn:incoming>Flow_0mv3ybl</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0mv3ybl" sourceRef="Activity_0z3bhcd" targetRef="Event_19cz4zc" />
+    <bpmn:sequenceFlow id="Flow_019f0hi" sourceRef="Activity_1ayo858" targetRef="Event_0ihdsom" />
+    <bpmn:sequenceFlow id="Flow_0cvcdnu" sourceRef="Activity_1f46b6h" targetRef="Activity_0z3bhcd" />
+    <bpmn:serviceTask id="Activity_1f46b6h" name="Mark False Positive" camunda:class="com.DronaPay.frm.AMLCASES.MarkFalsePositive">
+      <bpmn:incoming>Flow_1scg4a5</bpmn:incoming>
+      <bpmn:outgoing>Flow_0cvcdnu</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_08x933w" name="Mark False Positive" camunda:class="com.DronaPay.frm.AMLCASES.MarkFalsePositive">
+      <bpmn:incoming>Flow_1xy7r0f</bpmn:incoming>
+      <bpmn:outgoing>Flow_14e3l18</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_14e3l18" sourceRef="Activity_08x933w" targetRef="Activity_0z3bhcd" />
+    <bpmn:sequenceFlow id="Flow_1xwlb57" sourceRef="Gateway_0lnlpbh" targetRef="Activity_0h3c17z">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${Action=="suspicioussendtodb"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:businessRuleTask id="Activity_02r45ix" name="Decision" camunda:resultVariable="level1level2Asignee" camunda:decisionRef="AutoAllocation" camunda:mapDecisionResult="singleEntry">
+      <bpmn:incoming>Flow_0s5xqk1</bpmn:incoming>
+      <bpmn:outgoing>Flow_0e2hldw</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:sequenceFlow id="Flow_0e2hldw" sourceRef="Activity_02r45ix" targetRef="Activity_0cmtxnz" />
+    <bpmn:serviceTask id="Activity_0n203ob" name="Auto Allocation Service Task" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:class="com.DronaPay.frm.AMLCASES.AutoAllocationServiceTask">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="parentGroup">level1,level2</camunda:inputParameter>
+          <camunda:inputParameter name="childGroup">level2</camunda:inputParameter>
+          <camunda:inputParameter name="childTaskID">Activity_00sb3sv</camunda:inputParameter>
+          <camunda:inputParameter name="parentTaskID">Activity_0cmtxnz</camunda:inputParameter>
+          <camunda:inputParameter name="nextTaskID">Activity_0cmtxnz</camunda:inputParameter>
+          <camunda:inputParameter name="nextGroup">level1,level2</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0gragch</bpmn:incoming>
+      <bpmn:outgoing>Flow_0s5xqk1</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0s5xqk1" sourceRef="Activity_0n203ob" targetRef="Activity_02r45ix" />
+    <bpmn:serviceTask id="Activity_0kqh5iy" name="Auto Allocation Service Task" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:class="com.DronaPay.frm.AMLCASES.AutoAllocationServiceTask">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="parentGroup">level3</camunda:inputParameter>
+          <camunda:inputParameter name="childGroup">level2</camunda:inputParameter>
+          <camunda:inputParameter name="childTaskID">Activity_00sb3sv</camunda:inputParameter>
+          <camunda:inputParameter name="parentTaskID">Activity_1kzaeai</camunda:inputParameter>
+          <camunda:inputParameter name="nextTaskID">Activity_1kzaeai</camunda:inputParameter>
+          <camunda:inputParameter name="nextGroup">level3</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1cbmnbw</bpmn:incoming>
+      <bpmn:incoming>Flow_04w7xy4</bpmn:incoming>
+      <bpmn:outgoing>Flow_0rjg78a</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0rjg78a" sourceRef="Activity_0kqh5iy" targetRef="Activity_1j0zs6s" />
+    <bpmn:businessRuleTask id="Activity_1j0zs6s" name="Decision" camunda:resultVariable="level3Asignee" camunda:decisionRef="AutoAllocation" camunda:mapDecisionResult="singleEntry">
+      <bpmn:incoming>Flow_0rjg78a</bpmn:incoming>
+      <bpmn:outgoing>Flow_146v2y1</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:sequenceFlow id="Flow_146v2y1" sourceRef="Activity_1j0zs6s" targetRef="Activity_1kzaeai" />
+    <bpmn:serviceTask id="Activity_0qwyiuo" name="Auto Allocation Service Task" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:class="com.DronaPay.frm.AMLCASES.AutoAllocationServiceTask">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="parentGroup">level4</camunda:inputParameter>
+          <camunda:inputParameter name="childGroup">level3</camunda:inputParameter>
+          <camunda:inputParameter name="childTaskID">Activity_1kzaeai</camunda:inputParameter>
+          <camunda:inputParameter name="parentTaskID">Activity_0gwk1lw</camunda:inputParameter>
+          <camunda:inputParameter name="nextTaskID">Activity_0gwk1lw</camunda:inputParameter>
+          <camunda:inputParameter name="nextGroup">level4</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0n5d5u6</bpmn:incoming>
+      <bpmn:incoming>Flow_0roud79</bpmn:incoming>
+      <bpmn:outgoing>Flow_0if4xel</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0if4xel" sourceRef="Activity_0qwyiuo" targetRef="Activity_1tryabw" />
+    <bpmn:businessRuleTask id="Activity_1tryabw" name="Decision" camunda:resultVariable="level4Asignee" camunda:decisionRef="AutoAllocation" camunda:mapDecisionResult="singleEntry">
+      <bpmn:incoming>Flow_0if4xel</bpmn:incoming>
+      <bpmn:outgoing>Flow_02y42za</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:sequenceFlow id="Flow_02y42za" sourceRef="Activity_1tryabw" targetRef="Activity_0gwk1lw" />
+    <bpmn:serviceTask id="Activity_1mg6uqo" name="Auto Allocation Service Task" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:class="com.DronaPay.frm.AMLCASES.AutoAllocationServiceTask">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="parentGroup">level5</camunda:inputParameter>
+          <camunda:inputParameter name="childGroup">level4</camunda:inputParameter>
+          <camunda:inputParameter name="childTaskID">Activity_0gwk1lw</camunda:inputParameter>
+          <camunda:inputParameter name="parentTaskID">Activity_03yu3mr</camunda:inputParameter>
+          <camunda:inputParameter name="nextTaskID">Activity_03yu3mr</camunda:inputParameter>
+          <camunda:inputParameter name="nextGroup">level5</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1v9z72z</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ff8yrn</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0ff8yrn" sourceRef="Activity_1mg6uqo" targetRef="Activity_1mk9xqj" />
+    <bpmn:businessRuleTask id="Activity_1mk9xqj" name="Decision" camunda:resultVariable="level5Asignee" camunda:decisionRef="AutoAllocation" camunda:mapDecisionResult="singleEntry">
+      <bpmn:incoming>Flow_0ff8yrn</bpmn:incoming>
+      <bpmn:outgoing>Flow_0p8x1jw</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:sequenceFlow id="Flow_0p8x1jw" sourceRef="Activity_1mk9xqj" targetRef="Activity_03yu3mr" />
+    <bpmn:serviceTask id="Activity_08ijupj" name="Auto Allocation Service Task" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:class="com.DronaPay.frm.AMLCASES.AutoAllocationServiceTask">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="parentGroup">level5</camunda:inputParameter>
+          <camunda:inputParameter name="childGroup">level3</camunda:inputParameter>
+          <camunda:inputParameter name="childTaskID">Activity_1kzaeai</camunda:inputParameter>
+          <camunda:inputParameter name="parentTaskID">Activity_03yu3mr</camunda:inputParameter>
+          <camunda:inputParameter name="nextTaskID">Activity_03yu3mr</camunda:inputParameter>
+          <camunda:inputParameter name="nextGroup">level5</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1ou7d7o</bpmn:incoming>
+      <bpmn:outgoing>Flow_1aw5ner</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1aw5ner" sourceRef="Activity_08ijupj" targetRef="Activity_14syy60" />
+    <bpmn:businessRuleTask id="Activity_14syy60" name="Decision" camunda:resultVariable="level5Asignee" camunda:decisionRef="AutoAllocation" camunda:mapDecisionResult="singleEntry">
+      <bpmn:incoming>Flow_1aw5ner</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ik8qo2</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:sequenceFlow id="Flow_1ik8qo2" sourceRef="Activity_14syy60" targetRef="Activity_03yu3mr" />
+    <bpmn:businessRuleTask id="Activity_1wdcoc6" name="Decision" camunda:resultVariable="level3Asignee" camunda:decisionRef="AutoAllocation" camunda:mapDecisionResult="singleEntry">
+      <bpmn:incoming>Flow_14t77wg</bpmn:incoming>
+      <bpmn:outgoing>Flow_0f2dspb</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:sequenceFlow id="Flow_0f2dspb" sourceRef="Activity_1wdcoc6" targetRef="Activity_1kzaeai" />
+    <bpmn:serviceTask id="Activity_0a12si2" name="Auto Allocation Service Task" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:class="com.DronaPay.frm.AMLCASES.AutoAllocationServiceTask">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="parentGroup">level3</camunda:inputParameter>
+          <camunda:inputParameter name="childGroup">level4</camunda:inputParameter>
+          <camunda:inputParameter name="childTaskID">Activity_0gwk1lw</camunda:inputParameter>
+          <camunda:inputParameter name="parentTaskID">Activity_1kzaeai</camunda:inputParameter>
+          <camunda:inputParameter name="nextTaskID">Activity_1kzaeai</camunda:inputParameter>
+          <camunda:inputParameter name="nextGroup">level3</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_05alrqx</bpmn:incoming>
+      <bpmn:outgoing>Flow_14t77wg</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_14t77wg" sourceRef="Activity_0a12si2" targetRef="Activity_1wdcoc6" />
+    <bpmn:businessRuleTask id="Activity_1fkuvmo" name="Decision" camunda:resultVariable="itAsignee" camunda:decisionRef="AutoAllocation" camunda:mapDecisionResult="singleEntry">
+      <bpmn:incoming>Flow_1hbz5pd</bpmn:incoming>
+      <bpmn:outgoing>Flow_1vlroem</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:sequenceFlow id="Flow_1vlroem" sourceRef="Activity_1fkuvmo" targetRef="Activity_1ayo858" />
+    <bpmn:serviceTask id="Activity_1v5dqqg" name="Auto Allocation Service Task" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:class="com.DronaPay.frm.AMLCASES.AutoAllocationServiceTask">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="parentGroup">it</camunda:inputParameter>
+          <camunda:inputParameter name="childGroup">level5</camunda:inputParameter>
+          <camunda:inputParameter name="childTaskID">Activity_03yu3mr</camunda:inputParameter>
+          <camunda:inputParameter name="parentTaskID">Activity_1ayo858</camunda:inputParameter>
+          <camunda:inputParameter name="nextTaskID">Activity_1ayo858</camunda:inputParameter>
+          <camunda:inputParameter name="nextGroup">it</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_01llhiv</bpmn:incoming>
+      <bpmn:outgoing>Flow_1hbz5pd</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1hbz5pd" sourceRef="Activity_1v5dqqg" targetRef="Activity_1fkuvmo" />
+    <bpmn:serviceTask id="Activity_1koklf8" name="Auto Allocation Service Task" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:class="com.DronaPay.frm.AMLCASES.AutoAllocationServiceTask">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="parentGroup">level2</camunda:inputParameter>
+          <camunda:inputParameter name="childGroup">level3</camunda:inputParameter>
+          <camunda:inputParameter name="childTaskID">Activity_1kzaeai</camunda:inputParameter>
+          <camunda:inputParameter name="parentTaskID">Activity_00sb3sv</camunda:inputParameter>
+          <camunda:inputParameter name="nextTaskID">Activity_00sb3sv</camunda:inputParameter>
+          <camunda:inputParameter name="nextGroup">level2</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1qgxz6t</bpmn:incoming>
+      <bpmn:outgoing>Flow_170rm4g</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_170rm4g" sourceRef="Activity_1koklf8" targetRef="Activity_0iixaxv" />
+    <bpmn:businessRuleTask id="Activity_0iixaxv" name="Decision" camunda:resultVariable="level2Asignee" camunda:decisionRef="AutoAllocation" camunda:mapDecisionResult="singleEntry">
+      <bpmn:incoming>Flow_170rm4g</bpmn:incoming>
+      <bpmn:outgoing>Flow_19k2goh</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:sequenceFlow id="Flow_19k2goh" sourceRef="Activity_0iixaxv" targetRef="Activity_00sb3sv" />
+    <bpmn:businessRuleTask id="Activity_0lzg89e" name="Decision" camunda:resultVariable="level2Asignee" camunda:decisionRef="AutoAllocation" camunda:mapDecisionResult="singleEntry">
+      <bpmn:incoming>Flow_1m3ayqh</bpmn:incoming>
+      <bpmn:outgoing>Flow_0p4s3ci</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:sequenceFlow id="Flow_0p4s3ci" sourceRef="Activity_0lzg89e" targetRef="Activity_00sb3sv" />
+    <bpmn:serviceTask id="Activity_1ad243h" name="Auto Allocation Service Task" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:class="com.DronaPay.frm.AMLCASES.AutoAllocationServiceTask">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="parentGroup">level2</camunda:inputParameter>
+          <camunda:inputParameter name="childGroup">level1,level2</camunda:inputParameter>
+          <camunda:inputParameter name="childTaskID">Activity_0cmtxnz</camunda:inputParameter>
+          <camunda:inputParameter name="parentTaskID">Activity_00sb3sv</camunda:inputParameter>
+          <camunda:inputParameter name="nextTaskID">Activity_00sb3sv</camunda:inputParameter>
+          <camunda:inputParameter name="nextGroup">level2</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0lphhsk</bpmn:incoming>
+      <bpmn:outgoing>Flow_1m3ayqh</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1m3ayqh" sourceRef="Activity_1ad243h" targetRef="Activity_0lzg89e" />
+    <bpmn:serviceTask id="Activity_05vrr7b" name="Auto Allocation Service Task" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:class="com.DronaPay.frm.AMLCASES.AutoAllocationServiceTask">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="group">level1,level2</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_058ecar</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ngnezk</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0ngnezk" sourceRef="Activity_05vrr7b" targetRef="Activity_11e5c7x" />
+    <bpmn:businessRuleTask id="Activity_11e5c7x" name="Decision" camunda:resultVariable="level1level2Asignee" camunda:decisionRef="AutoAllocation" camunda:mapDecisionResult="singleEntry">
+      <bpmn:incoming>Flow_0ngnezk</bpmn:incoming>
+      <bpmn:outgoing>Flow_19633ve</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:sequenceFlow id="Flow_19633ve" sourceRef="Activity_11e5c7x" targetRef="Activity_0cmtxnz" />
+    <bpmn:sequenceFlow id="Flow_1iy8x5g" name="Approve STR by L4" sourceRef="Gateway_0xcckzr" targetRef="Activity_1un8pu3">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${Action5=="approvestrl4"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0roud79" name="Back to L4" sourceRef="Gateway_14o4n93" targetRef="Activity_0qwyiuo">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${Action6=="back_l5_to_l4"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_04w7xy4" name="Back to L3" sourceRef="Gateway_14o4n93" targetRef="Activity_0kqh5iy">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${Action6=="back_l5_to_l3"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="AMLCases">
+      <bpmndi:BPMNShape id="Event_1e3l95j_di" bpmnElement="Event_1e3l95j">
+        <dc:Bounds x="172" y="432" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="158" y="475" width="66" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_068lxij_di" bpmnElement="Activity_068lxij">
+        <dc:Bounds x="230" y="410" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0axld5g" bpmnElement="Gateway_0lnlpbh" isMarkerVisible="true" bioc:stroke="#6b3c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#6b3c00">
+        <dc:Bounds x="1055" y="485" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1050" y="545" width="60" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1dbd8gc" bpmnElement="Gateway_10dnygf" isMarkerVisible="true" bioc:stroke="#6b3c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#6b3c00">
+        <dc:Bounds x="1605" y="485" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1641" y="463" width="37" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0vzire2" bpmnElement="Activity_0stkafm">
+        <dc:Bounds x="1290" y="690" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0l281g1" bpmnElement="Activity_0h3c17z">
+        <dc:Bounds x="1030" y="690" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0yneqf2" bpmnElement="Activity_05ctjpi">
+        <dc:Bounds x="1700" y="470" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1os1nh2" bpmnElement="Activity_1kzaeai">
+        <dc:Bounds x="2060" y="470" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0crctq8" bpmnElement="Gateway_0kn7akq" isMarkerVisible="true" bioc:stroke="#6b3c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#6b3c00">
+        <dc:Bounds x="2315" y="485" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2321" y="453" width="37" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0kvomsx" bpmnElement="Activity_0gwk1lw">
+        <dc:Bounds x="2650" y="470" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0wb7gp7" bpmnElement="Activity_12euhcx">
+        <dc:Bounds x="2320" y="170" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_135evlx" bpmnElement="Event_1pbwbxp">
+        <dc:Bounds x="2352" y="332" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2348" y="378" width="46" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0ibc239" bpmnElement="Gateway_0xcckzr" isMarkerVisible="true" bioc:stroke="#6b3c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#6b3c00">
+        <dc:Bounds x="2815" y="485" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2781" y="535" width="37" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0hfjkzm" bpmnElement="Activity_03yu3mr">
+        <dc:Bounds x="3260" y="470" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1nmn8vc" bpmnElement="Gateway_14o4n93" isMarkerVisible="true" bioc:stroke="#6b3c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#6b3c00">
+        <dc:Bounds x="3445" y="485" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3445" y="461" width="49" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1ae0zz6" bpmnElement="Activity_1ayo858" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
+        <dc:Bounds x="4210" y="470" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0wjihfj" bpmnElement="Event_0ihdsom">
+        <dc:Bounds x="4422" y="492" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="4410" y="468" width="61" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_07bxqvg_di" bpmnElement="Activity_1un8pu3" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
+        <dc:Bounds x="3680" y="470" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_17kwsb1_di" bpmnElement="Activity_0b1tklu" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
+        <dc:Bounds x="3810" y="470" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1kxtep6_di" bpmnElement="Activity_11rg6dv" bioc:stroke="#e53935" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#e53935">
+        <dc:Bounds x="3760" y="610" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0cmtxnz_di" bpmnElement="Activity_0cmtxnz">
+        <dc:Bounds x="740" y="410" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_12rqcvd" bpmnElement="Activity_00sb3sv">
+        <dc:Bounds x="1490" y="470" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0z3bhcd_di" bpmnElement="Activity_0z3bhcd">
+        <dc:Bounds x="910" y="990" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_19cz4zc_di" bpmnElement="Event_19cz4zc">
+        <dc:Bounds x="942" y="1152" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="931" y="1198" width="61" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0tfdvct_di" bpmnElement="Activity_1f46b6h">
+        <dc:Bounds x="890" y="750" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_02zztop" bpmnElement="Activity_08x933w">
+        <dc:Bounds x="1180" y="910" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1m0hs6s" bpmnElement="Activity_02r45ix">
+        <dc:Bounds x="1080" y="270" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_046e0iu" bpmnElement="Activity_0n203ob">
+        <dc:Bounds x="1260" y="270" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0y6fxgu" bpmnElement="Activity_0kqh5iy">
+        <dc:Bounds x="1820" y="470" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1snq0m7" bpmnElement="Activity_1j0zs6s">
+        <dc:Bounds x="1940" y="470" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1vtpbdg" bpmnElement="Activity_0qwyiuo">
+        <dc:Bounds x="2410" y="470" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_15gwejf" bpmnElement="Activity_1tryabw">
+        <dc:Bounds x="2530" y="470" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1yv2rec" bpmnElement="Activity_1mg6uqo">
+        <dc:Bounds x="2970" y="470" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_11pfcl8" bpmnElement="Activity_1mk9xqj">
+        <dc:Bounds x="3120" y="470" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0w6pgp6" bpmnElement="Activity_08ijupj">
+        <dc:Bounds x="2970" y="610" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0vave2v" bpmnElement="Activity_14syy60">
+        <dc:Bounds x="3130" y="610" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1l01chr" bpmnElement="Activity_1wdcoc6">
+        <dc:Bounds x="2420" y="70" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0p14tf7" bpmnElement="Activity_0a12si2">
+        <dc:Bounds x="2590" y="70" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1vejezv" bpmnElement="Activity_1fkuvmo">
+        <dc:Bounds x="4060" y="470" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1kejig6" bpmnElement="Activity_1v5dqqg">
+        <dc:Bounds x="3930" y="470" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0w3wosn" bpmnElement="Activity_1koklf8">
+        <dc:Bounds x="2140" y="750" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0cq39xj" bpmnElement="Activity_0iixaxv">
+        <dc:Bounds x="2000" y="750" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0nruvpn" bpmnElement="Activity_0lzg89e">
+        <dc:Bounds x="1360" y="470" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0s13tdt" bpmnElement="Activity_1ad243h">
+        <dc:Bounds x="1240" y="470" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_051mkpj_di" bpmnElement="Activity_05vrr7b">
+        <dc:Bounds x="430" y="410" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0nbj64b_di" bpmnElement="Activity_11e5c7x">
+        <dc:Bounds x="600" y="410" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1qis86p_di" bpmnElement="Event_1cntwtu">
+        <dc:Bounds x="2682" y="452" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2723" y="433" width="33" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_061ri39_di" bpmnElement="Event_17ww84l">
+        <dc:Bounds x="2142" y="452" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2183" y="423" width="33" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_15rnuix_di" bpmnElement="Flow_15rnuix">
+        <di:waypoint x="208" y="450" />
+        <di:waypoint x="230" y="450" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_058ecar_di" bpmnElement="Flow_058ecar">
+        <di:waypoint x="330" y="450" />
+        <di:waypoint x="430" y="450" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_06hfn9n_di" bpmnElement="Flow_06hfn9n">
+        <di:waypoint x="1590" y="510" />
+        <di:waypoint x="1605" y="510" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0gragch_di" bpmnElement="Flow_0gragch">
+        <di:waypoint x="1630" y="485" />
+        <di:waypoint x="1630" y="310" />
+        <di:waypoint x="1360" y="310" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1422.9999999999995" y="293" width="80" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1lirfjv_di" bpmnElement="Flow_1lirfjv">
+        <di:waypoint x="1080" y="770" />
+        <di:waypoint x="1080" y="890" />
+        <di:waypoint x="790" y="890" />
+        <di:waypoint x="790" y="490" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_04akihz_di" bpmnElement="Flow_04akihz">
+        <di:waypoint x="1340" y="770" />
+        <di:waypoint x="1340" y="890" />
+        <di:waypoint x="790" y="890" />
+        <di:waypoint x="790" y="490" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1a0fxor_di" bpmnElement="Flow_1a0fxor">
+        <di:waypoint x="1655" y="510" />
+        <di:waypoint x="1700" y="510" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1642" y="492" width="72" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1cbmnbw_di" bpmnElement="Flow_1cbmnbw">
+        <di:waypoint x="1800" y="510" />
+        <di:waypoint x="1820" y="510" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ce1rip_di" bpmnElement="Flow_0ce1rip">
+        <di:waypoint x="2160" y="510" />
+        <di:waypoint x="2315" y="510" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1qgxz6t_di" bpmnElement="Flow_1qgxz6t">
+        <di:waypoint x="2340" y="535" />
+        <di:waypoint x="2340" y="790" />
+        <di:waypoint x="2240" y="790" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1913" y="763" width="53" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0n5d5u6_di" bpmnElement="Flow_0n5d5u6">
+        <di:waypoint x="2365" y="510" />
+        <di:waypoint x="2410" y="510" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2503" y="453" width="54" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_09s3ebh_di" bpmnElement="Flow_09s3ebh">
+        <di:waypoint x="2700" y="452" />
+        <di:waypoint x="2700" y="210" />
+        <di:waypoint x="2420" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0qudlaj_di" bpmnElement="Flow_0qudlaj">
+        <di:waypoint x="2370" y="250" />
+        <di:waypoint x="2370" y="332" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_19x0diy_di" bpmnElement="Flow_19x0diy">
+        <di:waypoint x="2750" y="510" />
+        <di:waypoint x="2815" y="510" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_05alrqx_di" bpmnElement="Flow_05alrqx">
+        <di:waypoint x="2840" y="485" />
+        <di:waypoint x="2840" y="110" />
+        <di:waypoint x="2690" y="110" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2287" y="83" width="53" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_11f3ske_di" bpmnElement="Flow_11f3ske">
+        <di:waypoint x="840" y="450" />
+        <di:waypoint x="1080" y="450" />
+        <di:waypoint x="1080" y="485" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1w6meex_di" bpmnElement="Flow_1w6meex">
+        <di:waypoint x="2160" y="452" />
+        <di:waypoint x="2160" y="210" />
+        <di:waypoint x="2320" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1v9z72z_di" bpmnElement="Flow_1v9z72z">
+        <di:waypoint x="2865" y="510" />
+        <di:waypoint x="2970" y="510" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2881" y="492" width="54" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1x60rq6_di" bpmnElement="Flow_1x60rq6">
+        <di:waypoint x="3360" y="510" />
+        <di:waypoint x="3445" y="510" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_06ax4dh_di" bpmnElement="Flow_06ax4dh" bioc:stroke="#e53935" color:border-color="#e53935">
+        <di:waypoint x="3470" y="535" />
+        <di:waypoint x="3470" y="650" />
+        <di:waypoint x="3760" y="650" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3484" y="593" width="33" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1glqshm_di" bpmnElement="Flow_1glqshm" bioc:stroke="#e53935" color:border-color="#e53935">
+        <di:waypoint x="2840" y="535" />
+        <di:waypoint x="2840" y="750" />
+        <di:waypoint x="3810" y="750" />
+        <di:waypoint x="3810" y="690" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3310" y="732" width="33" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0qnwd5t_di" bpmnElement="Flow_0qnwd5t" bioc:stroke="#e53935" color:border-color="#e53935">
+        <di:waypoint x="2360" y="515" />
+        <di:waypoint x="2360" y="790" />
+        <di:waypoint x="3840" y="790" />
+        <di:waypoint x="3840" y="690" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3086" y="772" width="33" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ou7d7o_di" bpmnElement="Flow_1ou7d7o">
+        <di:waypoint x="2365" y="510" />
+        <di:waypoint x="2390" y="510" />
+        <di:waypoint x="2390" y="650" />
+        <di:waypoint x="2970" y="650" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2755" y="633" width="54" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ovgvl6_di" bpmnElement="Flow_0ovgvl6" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="3495" y="510" />
+        <di:waypoint x="3680" y="510" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3567" y="492" width="41" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1khz51h_di" bpmnElement="Flow_1khz51h" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="3780" y="510" />
+        <di:waypoint x="3810" y="510" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_01llhiv_di" bpmnElement="Flow_01llhiv" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="3910" y="510" />
+        <di:waypoint x="3930" y="510" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ja2wdc_di" bpmnElement="Flow_1ja2wdc">
+        <di:waypoint x="3860" y="650" />
+        <di:waypoint x="4440" y="650" />
+        <di:waypoint x="4440" y="528" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_00kway3_di" bpmnElement="Flow_00kway3">
+        <di:waypoint x="1093" y="523" />
+        <di:waypoint x="1130" y="560" />
+        <di:waypoint x="1130" y="620" />
+        <di:waypoint x="1340" y="620" />
+        <di:waypoint x="1340" y="690" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0lphhsk_di" bpmnElement="Flow_0lphhsk">
+        <di:waypoint x="1105" y="510" />
+        <di:waypoint x="1240" y="510" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1scg4a5_di" bpmnElement="Flow_1scg4a5">
+        <di:waypoint x="1055" y="510" />
+        <di:waypoint x="940" y="510" />
+        <di:waypoint x="940" y="750" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="954" y="643" width="72" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1xy7r0f_di" bpmnElement="Flow_1xy7r0f">
+        <di:waypoint x="1630" y="535" />
+        <di:waypoint x="1630" y="950" />
+        <di:waypoint x="1280" y="950" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1360" y="916" width="72" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0mv3ybl_di" bpmnElement="Flow_0mv3ybl">
+        <di:waypoint x="960" y="1070" />
+        <di:waypoint x="960" y="1152" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_019f0hi_di" bpmnElement="Flow_019f0hi">
+        <di:waypoint x="4310" y="510" />
+        <di:waypoint x="4422" y="510" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0cvcdnu_di" bpmnElement="Flow_0cvcdnu">
+        <di:waypoint x="940" y="830" />
+        <di:waypoint x="940" y="990" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14e3l18_di" bpmnElement="Flow_14e3l18">
+        <di:waypoint x="1180" y="950" />
+        <di:waypoint x="990" y="950" />
+        <di:waypoint x="990" y="990" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1xwlb57_di" bpmnElement="Flow_1xwlb57">
+        <di:waypoint x="1080" y="535" />
+        <di:waypoint x="1080" y="613" />
+        <di:waypoint x="1060" y="613" />
+        <di:waypoint x="1060" y="690" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0e2hldw_di" bpmnElement="Flow_0e2hldw">
+        <di:waypoint x="1080" y="310" />
+        <di:waypoint x="790" y="310" />
+        <di:waypoint x="790" y="410" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0s5xqk1_di" bpmnElement="Flow_0s5xqk1">
+        <di:waypoint x="1260" y="310" />
+        <di:waypoint x="1180" y="310" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0rjg78a_di" bpmnElement="Flow_0rjg78a">
+        <di:waypoint x="1920" y="510" />
+        <di:waypoint x="1940" y="510" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_146v2y1_di" bpmnElement="Flow_146v2y1">
+        <di:waypoint x="2040" y="510" />
+        <di:waypoint x="2060" y="510" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0if4xel_di" bpmnElement="Flow_0if4xel">
+        <di:waypoint x="2510" y="510" />
+        <di:waypoint x="2530" y="510" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_02y42za_di" bpmnElement="Flow_02y42za">
+        <di:waypoint x="2630" y="510" />
+        <di:waypoint x="2650" y="510" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ff8yrn_di" bpmnElement="Flow_0ff8yrn">
+        <di:waypoint x="3070" y="510" />
+        <di:waypoint x="3120" y="510" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0p8x1jw_di" bpmnElement="Flow_0p8x1jw">
+        <di:waypoint x="3220" y="510" />
+        <di:waypoint x="3260" y="510" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1aw5ner_di" bpmnElement="Flow_1aw5ner">
+        <di:waypoint x="3070" y="650" />
+        <di:waypoint x="3130" y="650" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ik8qo2_di" bpmnElement="Flow_1ik8qo2">
+        <di:waypoint x="3230" y="650" />
+        <di:waypoint x="3290" y="650" />
+        <di:waypoint x="3290" y="550" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0f2dspb_di" bpmnElement="Flow_0f2dspb">
+        <di:waypoint x="2420" y="110" />
+        <di:waypoint x="2090" y="110" />
+        <di:waypoint x="2090" y="470" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14t77wg_di" bpmnElement="Flow_14t77wg">
+        <di:waypoint x="2590" y="110" />
+        <di:waypoint x="2520" y="110" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1vlroem_di" bpmnElement="Flow_1vlroem">
+        <di:waypoint x="4160" y="510" />
+        <di:waypoint x="4210" y="510" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1hbz5pd_di" bpmnElement="Flow_1hbz5pd">
+        <di:waypoint x="4030" y="510" />
+        <di:waypoint x="4060" y="510" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_170rm4g_di" bpmnElement="Flow_170rm4g">
+        <di:waypoint x="2140" y="790" />
+        <di:waypoint x="2100" y="790" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_19k2goh_di" bpmnElement="Flow_19k2goh">
+        <di:waypoint x="2000" y="790" />
+        <di:waypoint x="1540" y="790" />
+        <di:waypoint x="1540" y="550" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0p4s3ci_di" bpmnElement="Flow_0p4s3ci">
+        <di:waypoint x="1460" y="510" />
+        <di:waypoint x="1490" y="510" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1m3ayqh_di" bpmnElement="Flow_1m3ayqh">
+        <di:waypoint x="1340" y="510" />
+        <di:waypoint x="1360" y="510" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ngnezk_di" bpmnElement="Flow_0ngnezk">
+        <di:waypoint x="530" y="450" />
+        <di:waypoint x="600" y="450" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_19633ve_di" bpmnElement="Flow_19633ve">
+        <di:waypoint x="700" y="450" />
+        <di:waypoint x="740" y="450" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1iy8x5g_di" bpmnElement="Flow_1iy8x5g">
+        <di:waypoint x="2860" y="505" />
+        <di:waypoint x="2860" y="400" />
+        <di:waypoint x="3730" y="400" />
+        <di:waypoint x="3730" y="470" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3258" y="371" width="81" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0roud79_di" bpmnElement="Flow_0roud79">
+        <di:waypoint x="3470" y="535" />
+        <di:waypoint x="3470" y="870" />
+        <di:waypoint x="2440" y="870" />
+        <di:waypoint x="2440" y="550" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2929" y="852" width="53" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_04w7xy4_di" bpmnElement="Flow_04w7xy4">
+        <di:waypoint x="3470" y="535" />
+        <di:waypoint x="3470" y="1030" />
+        <di:waypoint x="1870" y="1030" />
+        <di:waypoint x="1870" y="550" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2644" y="1012" width="53" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
