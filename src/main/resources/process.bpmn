@@ -354,6 +354,16 @@
     <bpmn:userTask id="Activity_0cmtxnz" name="Review Case By L1/ L2" camunda:assignee="${level1level2Asignee}" camunda:candidateGroups="${&#39;level1_&#39;.concat(execution.getTenantId()).concat(&#39;,&#39;).concat(&#39;level2_&#39;).concat(execution.getTenantId())}">
       <bpmn:extensionElements>
         <camunda:formData>
+          <camunda:formField id="agentDecision" label="Agent Decision" type="string">
+  <camunda:validation>
+    <camunda:constraint name="readonly" />
+  </camunda:validation>
+</camunda:formField>
+<camunda:formField id="agentReason" label="Agent Reason" type="string">
+  <camunda:validation>
+    <camunda:constraint name="readonly" />
+  </camunda:validation>
+</camunda:formField>
           <camunda:formField id="Transaction" label="Transaction" type="string" />
           <camunda:formField id="RiskScore" label="RiskScore" type="long">
             <camunda:validation>
