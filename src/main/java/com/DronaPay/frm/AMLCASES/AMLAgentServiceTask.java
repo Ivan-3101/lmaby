@@ -15,42 +15,81 @@ public class AMLAgentServiceTask implements JavaDelegate {
     public void execute(DelegateExecution execution) throws Exception {
         log.info("AML Agent Service Task called for ticket id: " + execution.getVariable("TicketID"));
 
-        // Build request body
-        JSONObject requestBody = new JSONObject();
-        JSONObject data = new JSONObject();
+        try {
+            // Extract values from Transaction variable
+            String transactionJson = execution.getVariable("Transaction").toString();
+            JSONObject transactionObj = new JSONObject(transactionJson);
 
-        // Hardcoded values for testing - will be dynamic later
-        data.put("iaccountid", 1964362);
-        data.put("ipayeemccid", 1001);
-        data.put("itenantid", 8);
+            // Extract with validation
+            Object accountIdObj = transactionObj.optQuery("/observations/account/iaccountid");
+            Object mccIdObj = transactionObj.optQuery("/observations/customer/imcc");
 
-        requestBody.put("data", data);
-        requestBody.put("agentid", "aml-agent1");
+            if (accountIdObj == null || mccIdObj == null) {
+                log.error("Missing required fields - iaccountid: " + accountIdObj + ", imcc: " + mccIdObj);
+                execution.setVariable("agentStatusCode", -1);
+                execution.setVariable("agentDecision", "ERROR");
+                execution.setVariable("agentReason", "Missing iaccountid or ipayeemccid in Transaction data");
+                return; // Exit gracefully, let workflow continue
+            }
 
-        log.info("AML Agent request body: " + requestBody.toString());
+            long iaccountid = ((Number) accountIdObj).longValue();
+            long ipayeemccid = ((Number) mccIdObj).longValue();
+            int itenantid = Integer.parseInt(execution.getTenantId());
 
-        // Call the DIA agent
-        APIServices apiServices = new APIServices(execution.getTenantId());
-        CloseableHttpResponse response = apiServices.callDIAAgent(requestBody.toString());
+            if (iaccountid == 0 || ipayeemccid == 0) {
+                log.error("Invalid values - iaccountid: " + iaccountid + ", ipayeemccid: " + ipayeemccid);
+                execution.setVariable("agentStatusCode", -1);
+                execution.setVariable("agentDecision", "ERROR");
+                execution.setVariable("agentReason", "Invalid iaccountid or ipayeemccid (value is 0)");
+                return; // Exit gracefully, let workflow continue
+            }
 
-        String resp = EntityUtils.toString(response.getEntity());
-        int statusCode = response.getStatusLine().getStatusCode();
+            log.info("Extracted values - iaccountid: " + iaccountid + ", ipayeemccid: " + ipayeemccid + ", itenantid: " + itenantid);
 
-        log.info("AML Agent API status: " + statusCode);
-        log.info("AML Agent API response: " + resp);
+            // Build request body
+            JSONObject requestBody = new JSONObject();
+            JSONObject data = new JSONObject();
 
-        // Store response in process variables
-        execution.setVariable("agentStatusCode", statusCode);
-        execution.setVariable("agentResponse", resp);
+            data.put("iaccountid", iaccountid);
+            data.put("ipayeemccid", ipayeemccid);
+            data.put("itenantid", itenantid);
 
-        if (statusCode == 200) {
-            JSONObject responseObj = new JSONObject(resp);
-            execution.setVariable("agentDecision", responseObj.optString("decision"));
-            execution.setVariable("agentReason", responseObj.optString("reason"));
-            log.info("Agent Decision: " + responseObj.optString("decision"));
-            log.info("Agent Reason: " + responseObj.optString("reason"));
-        } else {
-            log.error("AML Agent API call failed with status: " + statusCode);
+            requestBody.put("data", data);
+            requestBody.put("agentid", "aml-agent1");
+
+            log.info("AML Agent request body: " + requestBody.toString());
+
+            // Call the DIA agent
+            APIServices apiServices = new APIServices(execution.getTenantId());
+            CloseableHttpResponse response = apiServices.callDIAAgent(requestBody.toString());
+
+            String resp = EntityUtils.toString(response.getEntity());
+            int statusCode = response.getStatusLine().getStatusCode();
+
+            log.info("AML Agent API status: " + statusCode);
+            log.info("AML Agent API response: " + resp);
+
+            execution.setVariable("agentStatusCode", statusCode);
+            execution.setVariable("agentResponse", resp);
+
+            if (statusCode == 200) {
+                JSONObject responseObj = new JSONObject(resp);
+                execution.setVariable("agentDecision", responseObj.optString("decision"));
+                execution.setVariable("agentReason", responseObj.optString("reason"));
+                log.info("Agent Decision: " + responseObj.optString("decision"));
+                log.info("Agent Reason: " + responseObj.optString("reason"));
+            } else {
+                log.error("AML Agent API call failed with status: " + statusCode);
+                execution.setVariable("agentDecision", "ERROR");
+                execution.setVariable("agentReason", "Agent API returned status: " + statusCode);
+            }
+
+        } catch (Exception e) {
+            log.error("Error in AML Agent Service Task: " + e.getMessage(), e);
+            execution.setVariable("agentStatusCode", -1);
+            execution.setVariable("agentDecision", "ERROR");
+            execution.setVariable("agentReason", "Exception: " + e.getMessage());
+            // Don't throw - let workflow continue
         }
     }
 }
