@@ -16,20 +16,20 @@ public class AMLAgentServiceTask implements JavaDelegate {
         log.info("AML Agent Service Task called for ticket id: " + execution.getVariable("TicketID"));
 
         try {
-            // Extract values from Transaction variable
             String transactionJson = execution.getVariable("Transaction").toString();
             JSONObject transactionObj = new JSONObject(transactionJson);
 
-            // Extract with validation
             Object accountIdObj = transactionObj.optQuery("/observations/account/iaccountid");
             Object mccIdObj = transactionObj.optQuery("/observations/customer/imcc");
 
-            if (accountIdObj == null || mccIdObj == null) {
+            // Handle JSONObject.NULL and actual null
+            if (accountIdObj == null || accountIdObj == JSONObject.NULL ||
+                    mccIdObj == null || mccIdObj == JSONObject.NULL) {
                 log.error("Missing required fields - iaccountid: " + accountIdObj + ", imcc: " + mccIdObj);
                 execution.setVariable("agentStatusCode", -1);
                 execution.setVariable("agentDecision", "ERROR");
                 execution.setVariable("agentReason", "Missing iaccountid or ipayeemccid in Transaction data");
-                return; // Exit gracefully, let workflow continue
+                return;
             }
 
             long iaccountid = ((Number) accountIdObj).longValue();
@@ -41,12 +41,11 @@ public class AMLAgentServiceTask implements JavaDelegate {
                 execution.setVariable("agentStatusCode", -1);
                 execution.setVariable("agentDecision", "ERROR");
                 execution.setVariable("agentReason", "Invalid iaccountid or ipayeemccid (value is 0)");
-                return; // Exit gracefully, let workflow continue
+                return;
             }
 
             log.info("Extracted values - iaccountid: " + iaccountid + ", ipayeemccid: " + ipayeemccid + ", itenantid: " + itenantid);
 
-            // Build request body
             JSONObject requestBody = new JSONObject();
             JSONObject data = new JSONObject();
 
@@ -59,7 +58,6 @@ public class AMLAgentServiceTask implements JavaDelegate {
 
             log.info("AML Agent request body: " + requestBody.toString());
 
-            // Call the DIA agent
             APIServices apiServices = new APIServices(execution.getTenantId());
             CloseableHttpResponse response = apiServices.callDIAAgent(requestBody.toString());
 
@@ -89,7 +87,6 @@ public class AMLAgentServiceTask implements JavaDelegate {
             execution.setVariable("agentStatusCode", -1);
             execution.setVariable("agentDecision", "ERROR");
             execution.setVariable("agentReason", "Exception: " + e.getMessage());
-            // Don't throw - let workflow continue
         }
     }
 }
