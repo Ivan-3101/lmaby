@@ -16,48 +16,68 @@ public class AMLAgentServiceTask implements JavaDelegate {
         log.info("AML Agent Service Task called for ticket id: " + execution.getVariable("TicketID"));
 
         try {
+            // 1. Determine which Agent to call (Default to aml-agent1 if not set)
+            String agentId = (String) execution.getVariable("targetAgentID");
+            if (agentId == null || agentId.isEmpty()) {
+                agentId = "aml-agent1";
+                log.info("targetAgentID not found, defaulting to: " + agentId);
+            } else {
+                log.info("Determined Target Agent ID from DMN: " + agentId);
+            }
+
             String transactionJson = execution.getVariable("Transaction").toString();
             JSONObject transactionObj = new JSONObject(transactionJson);
-
-            Object accountIdObj = transactionObj.optQuery("/observations/account/iaccountid");
-            Object mccIdObj = transactionObj.optQuery("/observations/customer/imcc");
-
-            // Handle JSONObject.NULL and actual null
-            if (accountIdObj == null || accountIdObj == JSONObject.NULL ||
-                    mccIdObj == null || mccIdObj == JSONObject.NULL) {
-                log.error("Missing required fields - iaccountid: " + accountIdObj + ", imcc: " + mccIdObj);
-                execution.setVariable("agentStatusCode", -1);
-                execution.setVariable("agentDecision", "ERROR");
-                execution.setVariable("agentReason", "Missing iaccountid or ipayeemccid in Transaction data");
-                return;
-            }
-
-            long iaccountid = ((Number) accountIdObj).longValue();
-            long ipayeemccid = ((Number) mccIdObj).longValue();
             int itenantid = Integer.parseInt(execution.getTenantId());
 
-            if (iaccountid == 0 || ipayeemccid == 0) {
-                log.error("Invalid values - iaccountid: " + iaccountid + ", ipayeemccid: " + ipayeemccid);
-                execution.setVariable("agentStatusCode", -1);
-                execution.setVariable("agentDecision", "ERROR");
-                execution.setVariable("agentReason", "Invalid iaccountid or ipayeemccid (value is 0)");
+            // 2. Extract Common Data
+            Object accountIdObj = transactionObj.optQuery("/observations/account/iaccountid");
+
+            if (accountIdObj == null || accountIdObj == JSONObject.NULL) {
+                handleError(execution, "Missing required field: iaccountid");
+                return;
+            }
+            long iaccountid = ((Number) accountIdObj).longValue();
+            if (iaccountid == 0) {
+                handleError(execution, "Invalid iaccountid (value is 0)");
                 return;
             }
 
-            log.info("Extracted values - iaccountid: " + iaccountid + ", ipayeemccid: " + ipayeemccid + ", itenantid: " + itenantid);
-
-            JSONObject requestBody = new JSONObject();
             JSONObject data = new JSONObject();
-
             data.put("iaccountid", iaccountid);
-            data.put("ipayeemccid", ipayeemccid);
             data.put("itenantid", itenantid);
 
+            // 3. Conditional Data Construction based on Agent ID
+            if ("aml-agent1".equalsIgnoreCase(agentId)) {
+//                // Agent 1 requires 'ipayeemccid'
+//                Object mccIdObj = transactionObj.optQuery("/observations/customer/imcc");
+
+                // Agent 1 requires 'ipayeemccid'
+                Object mccIdObj = transactionObj.optQuery("/observations/account/imcc");
+
+                if (mccIdObj == null || mccIdObj == JSONObject.NULL) {
+                    handleError(execution, "Missing required field for Agent 1: imcc");
+                    return;
+                }
+                long ipayeemccid = ((Number) mccIdObj).longValue();
+                if (ipayeemccid == 0) {
+                    handleError(execution, "Invalid ipayeemccid (value is 0)");
+                    return;
+                }
+                data.put("ipayeemccid", ipayeemccid);
+                log.info("Prepared data for Agent 1: iaccountid=" + iaccountid + ", ipayeemccid=" + ipayeemccid);
+            } else {
+                // Agent 2 (and others) only require iaccountid + itenantid
+                log.info("Prepared data for " + agentId + ": iaccountid=" + iaccountid);
+            }
+
+            // 4. Construct Final Request Body
+            JSONObject requestBody = new JSONObject();
             requestBody.put("data", data);
-            requestBody.put("agentid", "aml-agent1");
+            requestBody.put("agentid", agentId);
 
             log.info("AML Agent request body: " + requestBody.toString());
 
+            // 5. Call API
             APIServices apiServices = new APIServices(execution.getTenantId());
             CloseableHttpResponse response = apiServices.callDIAAgent(requestBody.toString());
 
@@ -75,7 +95,6 @@ public class AMLAgentServiceTask implements JavaDelegate {
                 execution.setVariable("agentDecision", responseObj.optString("decision"));
                 execution.setVariable("agentReason", responseObj.optString("reason"));
                 log.info("Agent Decision: " + responseObj.optString("decision"));
-                log.info("Agent Reason: " + responseObj.optString("reason"));
             } else {
                 log.error("AML Agent API call failed with status: " + statusCode);
                 execution.setVariable("agentDecision", "ERROR");
@@ -88,5 +107,12 @@ public class AMLAgentServiceTask implements JavaDelegate {
             execution.setVariable("agentDecision", "ERROR");
             execution.setVariable("agentReason", "Exception: " + e.getMessage());
         }
+    }
+
+    private void handleError(DelegateExecution execution, String reason) {
+        log.error(reason);
+        execution.setVariable("agentStatusCode", -1);
+        execution.setVariable("agentDecision", "ERROR");
+        execution.setVariable("agentReason", reason);
     }
 }
