@@ -1,0 +1,4 @@
+{
+    "decision": "False Positive",
+    "reason": "Current Top-5 share % is 1.8%, previous Top-5 share % is 2%, top-5 variance % is 0.2% (Condition 1 and 2 both indicate False Positive). Turnover growth is 31%, ATS change is 4%."
+}
