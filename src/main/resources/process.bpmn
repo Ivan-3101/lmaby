@@ -355,15 +355,15 @@
       <bpmn:extensionElements>
         <camunda:formData>
           <camunda:formField id="agentDecision" label="Agent Decision" type="string">
-  <camunda:validation>
-    <camunda:constraint name="readonly" />
-  </camunda:validation>
-</camunda:formField>
-<camunda:formField id="agentReason" label="Agent Reason" type="string">
-  <camunda:validation>
-    <camunda:constraint name="readonly" />
-  </camunda:validation>
-</camunda:formField>
+            <camunda:validation>
+              <camunda:constraint name="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="agentReason" label="Agent ReasontextArea" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" />
+            </camunda:validation>
+          </camunda:formField>
           <camunda:formField id="Transaction" label="Transaction" type="string" />
           <camunda:formField id="RiskScore" label="RiskScore" type="long">
             <camunda:validation>
@@ -760,14 +760,6 @@
       <bpmndi:BPMNShape id="Activity_068lxij_di" bpmnElement="Activity_068lxij">
         <dc:Bounds x="230" y="410" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_051mkpj_di" bpmnElement="Activity_05vrr7b">
-        <dc:Bounds x="430" y="410" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0nbj64b_di" bpmnElement="Activity_11e5c7x">
-        <dc:Bounds x="600" y="410" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0axld5g" bpmnElement="Gateway_0lnlpbh" isMarkerVisible="true" bioc:stroke="#6b3c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#6b3c00">
         <dc:Bounds x="1225" y="485" width="50" height="50" />
         <bpmndi:BPMNLabel>
@@ -948,20 +940,28 @@
         <dc:Bounds x="1410" y="470" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_051mkpj_di" bpmnElement="Activity_05vrr7b">
+        <dc:Bounds x="430" y="410" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0nbj64b_di" bpmnElement="Activity_11e5c7x">
+        <dc:Bounds x="600" y="410" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_02eumrr_di" bpmnElement="Activity_AMLAgent" bioc:stroke="#0d4372" bioc:fill="#bbdefb" color:background-color="#bbdefb" color:border-color="#0d4372">
         <dc:Bounds x="750" y="410" width="100" height="80" />
         <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_061ri39_di" bpmnElement="Event_17ww84l">
-        <dc:Bounds x="2312" y="452" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="2353" y="423" width="33" height="14" />
-        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1qis86p_di" bpmnElement="Event_1cntwtu">
         <dc:Bounds x="2852" y="452" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="2893" y="433" width="33" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_061ri39_di" bpmnElement="Event_17ww84l">
+        <dc:Bounds x="2312" y="452" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2353" y="423" width="33" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_15rnuix_di" bpmnElement="Flow_15rnuix">
