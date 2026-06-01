@@ -359,7 +359,7 @@
               <camunda:constraint name="readonly" />
             </camunda:validation>
           </camunda:formField>
-          <camunda:formField id="agentReason" label="Agent ReasontextArea" type="string">
+          <camunda:formField id="agentReason" label="Agent ReasontextArea10rem" type="string">
             <camunda:validation>
               <camunda:constraint name="readonly" />
             </camunda:validation>
