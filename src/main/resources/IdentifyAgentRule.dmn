@@ -8,6 +8,8 @@
         </inputExpression>
       </input>
       <output id="Output_1" label="Target Agent ID" name="targetAgentID" typeRef="string" />
+
+      <!-- Rule 1: Merchant volume growth -> aml-agent1 (unchanged) -->
       <rule id="DecisionRule_1">
         <inputEntry id="UnaryTests_1">
           <text>contains(failedRules, "Merchant volume growth")</text>
@@ -16,6 +18,8 @@
           <text>"aml-agent1"</text>
         </outputEntry>
       </rule>
+
+      <!-- Rule 2: High concentration same value payments -> aml-agent2 (unchanged) -->
       <rule id="DecisionRule_2">
         <inputEntry id="UnaryTests_2">
           <text>contains(failedRules, "High concentration and volume of payments of same value or multiples of same value")</text>
@@ -24,14 +28,37 @@
           <text>"aml-agent2"</text>
         </outputEntry>
       </rule>
+
+      <!-- Rule 3: Night-time transaction -> aml-agent3 (NEW) -->
       <rule id="DecisionRule_3">
         <inputEntry id="UnaryTests_3">
-          <text></text>
+          <text>contains(failedRules, "Night-time transaction concentration")</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_3">
+          <text>"aml-agent3"</text>
+        </outputEntry>
+      </rule>
+
+      <!-- Rule 4: High value threshold -> aml-agent4 (NEW) -->
+      <rule id="DecisionRule_4">
+        <inputEntry id="UnaryTests_4">
+          <text>contains(failedRules, "High value threshold")</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_4">
+          <text>"aml-agent4"</text>
+        </outputEntry>
+      </rule>
+
+      <!-- Rule 5: Catch-all fallback -> aml-agent1 (was Rule 3) -->
+      <rule id="DecisionRule_5">
+        <inputEntry id="UnaryTests_5">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_5">
           <text>"aml-agent1"</text>
         </outputEntry>
       </rule>
+
     </decisionTable>
   </decision>
   <dmndi:DMNDI>

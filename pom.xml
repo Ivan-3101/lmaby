@@ -133,11 +133,6 @@
 
         <!-- Add your own dependencies here, if in compile scope, they are added to the war -->
 
-        <dependency>
-            <groupId>org.cibseven.bpm</groupId>
-            <artifactId>cibseven-engine</artifactId>
-            <scope>provided</scope>
-        </dependency>
 
         <dependency>
             <groupId>com.fasterxml.uuid</groupId>
